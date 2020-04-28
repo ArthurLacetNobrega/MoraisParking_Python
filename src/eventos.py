@@ -1,4 +1,4 @@
-class Eventos (object):
+class Eventos ():
     def __init__(self, nome, data, vagas, zonas):
         self.nome = nome
         self.data = data
@@ -7,31 +7,31 @@ class Eventos (object):
 
     #Getters & Setters
 
-    def nome(self):
+    def get_nome(self):
         return self.nome
 
-    def nome (self, nome):
+    def set_nome (self, nome):
         self._nome = nome
 
 
-    def data(self):
+    def get_data(self):
         return self.data
 
-    def data(self, data):
+    def set_data(self, data):
         self._data = data
 
 
-    def vagas(self):
+    def get_vagas(self):
         return self.vagas
 
-    def vagas(self, vagas):
+    def set_vagas(self, vagas):
         self.vagas = vagas
 
 
-    def zonas(self):
+    def get_zonas(self):
         return self.zonas
 
-    def zonas(self, zonas):
+    def set_zonas(self, zonas):
         self.__zonas = zonas
 
     #To String
@@ -41,6 +41,5 @@ class Eventos (object):
         "\nVagas: {}"
         "\nZonas: {}".format(self.nome, self.data, self.vagas, self.zonas))
 
-a = Eventos("Inova", "25/11/2020", 1500, "A,B,C")
-print(a)
+
 

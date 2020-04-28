@@ -1,6 +1,9 @@
+from areas import Areas
+from eventos import Eventos
 from proprietario import Proprietario
-from veiculo import Veiculo
 from usuario import Usuario
+from veiculo import Veiculo
+from ocorrencias import Ocorrencia
 from estacionamento import Estacionamento
 
 estacionamento = Estacionamento()
@@ -19,15 +22,15 @@ estacionamento = Estacionamento()
 #placa = input("Insira a placa do veículo: ").upper()
 #modelo = input("Insira o modelo do veículo: ").upper()
 #categoria = estacionamento.validar_cetegoria(input("Insira a categoria: "))
-#estacionamento.cadastrar_veiculo('arthur', '20192007015', 'SI', 'OFH8830', 'gol', 'carro')
-#estacionamento.cadastrar_veiculo('iria', '20192007015', 'SI', 'OFX8830', 'gol', 'carro')
+estacionamento.cadastrar_veiculo('arthur', '20192007015', 'SI', 'OFH8830', 'gol', 'carro')
+estacionamento.cadastrar_veiculo('iria', '20192007015', 'SI', 'OFX8830', 'gol', 'moto')
 
 #for veiculo in estacionamento.get_cadastro_veiculos():
-   #print(veiculo)
+ #  print(veiculo)
+
 #validar veiculo
 
 #print(estacionamento.validar_veiculo('ofh8830'))
-
 
 #remover veiculo
 #estacionamento.remover_veiculo('ofh8830')
@@ -46,10 +49,16 @@ estacionamento = Estacionamento()
 
 #print(estacionamento.login('arthur', 'voltas2'))
 
+#cadastrar area
 
+estacionamento.cadastrar_area("Carros", 10, "carro")
+estacionamento.cadastrar_area("Motos", 5, "moto")
 
-#validar usuario
+#for area in estacionamento.get_controle_areas():
+#    print(area)
 
+estacionamento.validar_entrada('ofh8830')
+estacionamento.validar_entrada('OFX8830')
 
-
-#login
+for area in estacionamento.get_controle_areas():
+    print(area.mostrar_area())

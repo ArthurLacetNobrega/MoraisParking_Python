@@ -1,4 +1,4 @@
-class Ocorrencia(object):
+class Ocorrencia():
 
     def __init__(self, categoria, quantidade_veiculos, data, hora, fatos):
         self.categoria = categoria
@@ -9,48 +9,48 @@ class Ocorrencia(object):
         self.fatos = fatos
 
     #Getter & Setter
-    def categoria(self):
+    def get_categoria(self):
         return self.categoria
 
-    def categoria (self, categoria):
+    def set_categoria (self, categoria):
         self.categoria = categoria
 
 
-    def quantidade_veiculos(self):
+    def get_quantidade_veiculos(self):
         return self.quantidade_veiculos
 
-    def quantidade_veiculos(self, quantidade_veiculos):
+    def set_quantidade_veiculos(self, quantidade_veiculos):
         self.quantidade_veiculos = quantidade_veiculos
 
 
-    def veiculos_ocorrencias(self):
+    def get_veiculos_ocorrencias(self):
         return self.veiculos_ocorrencias
 
 
-    def veiculos_ocorrencias(self, veiculos_ocorrencias):
+    def set_veiculos_ocorrencias(self, veiculos_ocorrencias):
         self.veiculos_ocorrencias = veiculos_ocorrencias
 
 
-    def data(self):
+    def get_data(self):
         return self.data
 
-    def data(self, data):
+    def get_data(self, data):
         self.data = data
 
 
-    def hora(self):
+    def get_hora(self):
         return self._hora
 
 
-    def hora(self, hora):
+    def set_hora(self, hora):
         self.hora = hora
 
 
-    def fatos(self):
+    def get_fatos(self):
         return self.fatos
 
 
-    def fatos(self, fatos):
+    def set_fatos(self, fatos):
         self.fatos = fatos
 
     #To String

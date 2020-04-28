@@ -70,10 +70,21 @@ class Estacionamento:
         self.cadastro_veiculos.remove(veiculo)
 
     def validar_entrada(self, placa):
-        pass #aquivou precisar da classe area pra finalizar
+        if self.validar_veiculo(placa.upper()) != None:
+            veic = self.validar_veiculo(placa.upper())
+            for area in self.get_controle_areas():
+                if area.get_categoria().upper() == veic.get_categoria().upper():
+                    area.entrada_veiculo(veic)
+                    return veic
+            return None
 
     def validar_saida(self, placa):
-        pass  # aquivou precisar da classe area pra finalizar
+        veic = self.validar_veiculo(placa.upper())
+        for area in self.get_controle_areas():
+            if area.get_categoria().upper() == veic.get_categoria().upper():
+                area.saida_veiculo(veic)
+            else:
+                print("Entrada não registrada!")
 
 
     #METODOS RELACIONADOS A USUARIOS
@@ -99,23 +110,23 @@ class Estacionamento:
 
 #METODOS RELACIONADOS A ÁREAS
     def cadastrar_area(self, nome, capacidade, categoria):
-        area = Areas(nome, capacidade, categoria)
+        area = Areas(nome.upper(), capacidade, categoria.upper())
         self.controle_areas.append(area)
 
     def ocupacao_areas(self, categoria):
         percent = 0
         area = Areas()
         for area in self.controle_areas:
-            if categoria == area.getCategoria:
-                quantidade = area.getVeiculos_area
-                percent = (quantidade * 100 / area.getCapacidade)
+            if categoria == area.get_categoria:
+                quantidade = len(area.get_veiculos_area)
+                percent = (quantidade * 100 / area.get_capacidade)
         return percent
 
     #METODOS RELACIONADOS A OCORRÊNCIAS
     def cadastrar_ocorrencia(self, id, tipo, quantidade_veiculos, data, hora, null=None):
         ocorrencia = Ocorrencia(id, tipo, quantidade_veiculos, data, hora)
         self.cadastro_ocorrencias.append(ocorrencia)
-        for  i in range(quantidade_veiculos):
+        for i in range(quantidade_veiculos):
             placa = input("Insira a placa da ocorrência: ")
             veiculo = self.validar_veiculo(placa)
             if veiculo != null:
