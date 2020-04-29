@@ -1,4 +1,5 @@
 class Areas():
+    """Representa as áreas do estacionamento, por categoria"""
     def __init__(self, nome, capacidade, categoria):
         self.nome = nome
         self.capacidade = capacidade
@@ -27,22 +28,16 @@ class Areas():
     def get_veiculos_area(self):
         return self.veiculos_area
 
-    #Methods
+    #Metodos
     def entrada_veiculo(self, veiculo):
         self.veiculos_area.append(veiculo)
 
     def saida_veiculo(self, veiculo):
         self.veiculos_area.remove(veiculo)
 
-    def mostrar_area(self):
-        for veiculo in self.veiculos_area():
-            print(veiculo)
-
-     #To String
+    #To String
     def __str__(self):
-        return (" Nome: {} "
-        "\n Categoria: {}"
-        "\n Capacidade: {}".format(self.nome,self.categoria,self.capacidade))
+        return "Nome: %s\nCapacidade: %d\nCategoria: %s" %(self.nome, self.capacidade, self.categoria)
 
 
 

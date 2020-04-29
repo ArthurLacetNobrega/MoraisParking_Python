@@ -4,7 +4,7 @@ from proprietario import Proprietario
 from usuario import Usuario
 from veiculo import Veiculo
 from ocorrencias import Ocorrencia
-
+from datetime import datetime,  timedelta
 
 class Estacionamento:
     """Representa o estacionamento e cotrola a integração dos métodos das classes"""
@@ -30,12 +30,6 @@ class Estacionamento:
     def get_categorias(self):
         return self.categorias
 
-    def get_relatorio_entradas(self):
-        return self.relatorio_entradas
-
-    def get_relatorio_status(self):
-        return self.relatorio_status
-
     def get_cadastro_usuario(self):
         return self.cadastro_usuario
 
@@ -55,15 +49,15 @@ class Estacionamento:
 
     # METODOS RELACIONADOS A VEICULOS
     def cadastrar_veiculo(self, nome, matricula, curso, placa, modelo, categoria):
-        prop = Proprietario(nome, matricula, curso)
-        veic = Veiculo(prop, placa, modelo, categoria)
+        prop = Proprietario(nome.upper(), matricula.upper(), curso.upper())
+        veic = Veiculo(prop, placa.upper(), modelo.upper(), categoria.upper())
         self.cadastro_veiculos.append(veic)
 
     def validar_veiculo(self, placa):
         for veiculo in self.cadastro_veiculos:
             if placa.upper() == veiculo.get_placa():
                 return veiculo
-            return None
+        return None
 
     def remover_veiculo(self, placa):
         veiculo = self.validar_veiculo(placa.upper())
@@ -75,7 +69,6 @@ class Estacionamento:
             for area in self.get_controle_areas():
                 if area.get_categoria().upper() == veic.get_categoria().upper():
                     area.entrada_veiculo(veic)
-                    return veic
             return None
 
     def validar_saida(self, placa):
@@ -89,7 +82,7 @@ class Estacionamento:
 
     #METODOS RELACIONADOS A USUARIOS
     def cadastrar_usuario(self,nome, cpf, funcao, setor, usuario, senha):
-        user = Usuario(nome, cpf, funcao, setor, usuario, senha)
+        user = Usuario(nome.upper(), cpf.upper(), funcao.upper(), setor.upper(), usuario, senha)
         self.cadastro_usuario.append(user)
 
     def validar_usuario(self, nome_usuario):
@@ -111,34 +104,38 @@ class Estacionamento:
 #METODOS RELACIONADOS A ÁREAS
     def cadastrar_area(self, nome, capacidade, categoria):
         area = Areas(nome.upper(), capacidade, categoria.upper())
+        self.categorias.append(categoria.upper())
         self.controle_areas.append(area)
 
     def ocupacao_areas(self, categoria):
         percent = 0
-        area = Areas()
         for area in self.controle_areas:
-            if categoria == area.get_categoria:
+            if categoria.upper() == area.get_categoria:
                 quantidade = len(area.get_veiculos_area)
                 percent = (quantidade * 100 / area.get_capacidade)
         return percent
 
     #METODOS RELACIONADOS A OCORRÊNCIAS
-    def cadastrar_ocorrencia(self, id, tipo, quantidade_veiculos, data, hora, null=None):
-        ocorrencia = Ocorrencia(id, tipo, quantidade_veiculos, data, hora)
+    def cadastrar_ocorrencia(self, id, tipo, quantidade_veiculos, data, hora, fatos):
+        ocorrencia = Ocorrencia(id, tipo.upper(), quantidade_veiculos, data, hora, fatos)
         self.cadastro_ocorrencias.append(ocorrencia)
+        i = 0
         for i in range(quantidade_veiculos):
+            i += 1
             placa = input("Insira a placa da ocorrência: ")
-            veiculo = self.validar_veiculo(placa)
-            if veiculo != null:
+            veiculo = self.validar_veiculo(placa.upper())
+            if veiculo != None:
                 ocorrencia.adicionar_veiculo(veiculo)
             else:
                 print("Veículo não cadastrado!")
 
-
-    # METODOS RELACIONADOS A EVENTOS
-    def cadastrar_evento(self, nome, data, duracao, vagas):
+        # METODOS RELACIONADOS A EVENTOS
+    def cadastrar_evento(self, nome, data_inicio, duracao, vagas):
+        i = 0
+        data = date = datetime.strptime(data_inicio, '%d/%m/%Y').date()
         for i in range(duracao):
-            evento = Eventos(nome, data, vagas)
+            data_nova = data + timedelta(days=i)
+            evento = Eventos(nome, data_nova, duracao, vagas)
             self.controle_eventos.append(evento)
 
 

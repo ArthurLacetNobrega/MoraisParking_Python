@@ -8,35 +8,29 @@ from estacionamento import Estacionamento
 
 estacionamento = Estacionamento()
 
-#cadastrar categoria
-#categ = estacionamento.adicionar_categoria('carro')
 
-#print(estacionamento.get_categorias())
-
-#estacionamento.validar_cetegoria('moto')
-
+#cadastrar area
+estacionamento.cadastrar_area("Carros", 10, "carro")
+estacionamento.cadastrar_area("Motos", 5, 'moto')
 #cadastrar veiculo
-#nome = input("Insira o nome do Proprietário: ").upper()
-#matricula = input("Insira a matricula, caso aplicável: ").upper()
-#curso = input("Insira o curso, caso aplicável: ").upper()
-#placa = input("Insira a placa do veículo: ").upper()
-#modelo = input("Insira o modelo do veículo: ").upper()
-#categoria = estacionamento.validar_cetegoria(input("Insira a categoria: "))
-estacionamento.cadastrar_veiculo('arthur', '20192007015', 'SI', 'OFH8830', 'gol', 'carro')
-estacionamento.cadastrar_veiculo('iria', '20192007015', 'SI', 'OFX8830', 'gol', 'moto')
-
-#for veiculo in estacionamento.get_cadastro_veiculos():
- #  print(veiculo)
+estacionamento.cadastrar_veiculo('arthur', '20192007015', 'SI', 'aaa8830', 'gol', 'carro')
+estacionamento.cadastrar_veiculo('iria', '20192007015', 'SI', 'bbb8830', 'gol', 'moto')
+estacionamento.cadastrar_veiculo('joao', '20192007015', 'SI', 'ccc8830', 'gol', 'carro')
+print('***veiculos cadastrados***')
+for veiculo in estacionamento.get_cadastro_veiculos():
+    print(veiculo)
 
 #validar veiculo
-
-#print(estacionamento.validar_veiculo('ofh8830'))
+print('***veiculo validado***')
+print("validar veiculo = ", estacionamento.validar_veiculo('aaa8830'))
 
 #remover veiculo
-#estacionamento.remover_veiculo('ofh8830')
+estacionamento.remover_veiculo('aaa8830')
 
-#for veiculo in estacionamento.get_cadastro_veiculos():
- #  print(veiculo)
+print('**********************')
+print('depois de remover veiculo:')
+for veiculo in estacionamento.get_cadastro_veiculos():
+    print(veiculo)
 
 #cadastrar usuario
 #user = Usuario('Arthur', '01233265748', 'gestor', 'Gerência', 'arthur', 'voltas28')
@@ -51,14 +45,37 @@ estacionamento.cadastrar_veiculo('iria', '20192007015', 'SI', 'OFX8830', 'gol', 
 
 #cadastrar area
 
-estacionamento.cadastrar_area("Carros", 10, "carro")
-estacionamento.cadastrar_area("Motos", 5, "moto")
-
-#for area in estacionamento.get_controle_areas():
-#    print(area)
-
-estacionamento.validar_entrada('ofh8830')
-estacionamento.validar_entrada('OFX8830')
+print('******************')
+print('Areas:')
 
 for area in estacionamento.get_controle_areas():
-    print(area.mostrar_area())
+    print(area)
+
+estacionamento.cadastrar_veiculo('arthur', '20192007015', 'SI', 'aaa8830', 'gol', 'carro')
+
+estacionamento.validar_entrada('aaa8830')
+estacionamento.validar_entrada('bbb8830')
+estacionamento.validar_entrada('ccc8830')
+
+print('**************')
+print("mostrar areas: ")
+
+
+for area in estacionamento.get_controle_areas():
+    print(area.get_categoria())
+    for veiculo in area.get_veiculos_area():
+        print(veiculo)
+
+print('******************')
+print('Ocorrencias:')
+estacionamento.cadastrar_ocorrencia(1, 'colisão', 2, '15/04/2020', '17:30', 'o veiculo xxx bateu na traseira do veiculo yyyy')
+
+for ocorrencia in estacionamento.get_cadastro_ocorrencias():
+    print(ocorrencia)
+
+print('******************')
+print('Eventos:')
+estacionamento.cadastrar_evento('Inova', '25/05/2020', 5, 500)
+
+for evento in estacionamento.get_controle_eventos():
+    print(evento)
