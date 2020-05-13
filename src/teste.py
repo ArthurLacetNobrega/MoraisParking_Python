@@ -9,23 +9,18 @@ from estacionamento import Estacionamento
 estacionamento = Estacionamento()
 
 
+
 #cadastrar area
 estacionamento.cadastrar_area("Carros", 10, "carro")
 estacionamento.cadastrar_area("Motos", 5, 'moto')
-#cadastrar veiculo
-estacionamento.cadastrar_veiculo('arthur', '20192007015', 'SI', 'aaa8830', 'gol', 'carro')
-estacionamento.cadastrar_veiculo('iria', '20192007015', 'SI', 'bbb8830', 'gol', 'moto')
-estacionamento.cadastrar_veiculo('joao', '20192007015', 'SI', 'ccc8830', 'gol', 'carro')
-print('***veiculos cadastrados***')
-for veiculo in estacionamento.get_cadastro_veiculos():
-    print(veiculo)
+
 
 #validar veiculo
 print('***veiculo validado***')
 print("validar veiculo = ", estacionamento.validar_veiculo('aaa8830'))
 
 #remover veiculo
-estacionamento.remover_veiculo('aaa8830')
+#estacionamento.remover_veiculo('aaa8830')
 
 print('**********************')
 print('depois de remover veiculo:')
@@ -51,7 +46,17 @@ print('Areas:')
 for area in estacionamento.get_controle_areas():
     print(area)
 
-estacionamento.cadastrar_veiculo('arthur', '20192007015', 'SI', 'aaa8830', 'gol', 'carro')
+#estacionamento.cadastrar_veiculo('arthur', '20192007015', 'SI', 'aaa8830', 'gol', 'carro')
+#estacionamento.cadastrar_veiculo('Iria', '20192007015', 'SI', 'bbb8830', 'gol', 'moto')
+#estacionamento.cadastrar_veiculo('Betus', '20192007015', 'SI', 'ccc8830', 'gol', 'moto')
+
+#cadastrar veiculo
+
+print('***veiculos cadastrados***')
+for veiculo in estacionamento.get_cadastro_veiculos():
+    print(veiculo)
+
+print('**** apareceu algo? *****')
 
 estacionamento.validar_entrada('aaa8830')
 estacionamento.validar_entrada('bbb8830')
@@ -65,6 +70,12 @@ for area in estacionamento.get_controle_areas():
     print(area.get_categoria())
     for veiculo in area.get_veiculos_area():
         print(veiculo)
+
+for area in estacionamento.get_controle_areas():
+    print(area.get_categoria())
+    ocup = estacionamento.ocupacao_areas(area.get_categoria())
+    print(ocup, "%")
+
 
 print('******************')
 print('Ocorrencias:')

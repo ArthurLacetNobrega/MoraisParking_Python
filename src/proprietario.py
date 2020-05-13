@@ -1,3 +1,5 @@
+import sqlite3
+
 class Proprietario:
     """ Representa o proprietário do veículo"""
 
@@ -27,4 +29,9 @@ class Proprietario:
 
     # toString
     def __str__(self):
-        return '%s , %s, %s' % (self.nome, self.matricula, self.curso)
+        return 'Nome: %s\nMatricula: %s\nCurso: %s' % (self.nome, self.matricula, self.curso)
+
+
+
+
+

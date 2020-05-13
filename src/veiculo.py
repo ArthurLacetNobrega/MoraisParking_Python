@@ -1,15 +1,15 @@
-from proprietario import Proprietario
+import sqlite3
 
 class Veiculo:
     """representa os veículos que terão acesso ao estacionamento"""
 
-    def __init__(self, proprietario, placa, modelo, categoria):
-        self.proprietario = proprietario
+    def __init__(self, placa, proprietario, modelo, categoria):
         self.placa = placa
+        self.proprietario = proprietario
         self.modelo = modelo
         self.categoria = categoria
 
-    # Getters e Setters
+    # Getters e Setters 
     def get_proprietario(self):
         return self.proprietario
 
@@ -36,4 +36,6 @@ class Veiculo:
 
     #toString
     def __str__(self):
-        return "Placa: %s\n Proprietário: %s\n Modelo: %s\n Categoria: %s" %(self.placa, self.proprietario, self.modelo, self.categoria)
+        return "Placa: %s\nProprietário: %s\nModelo: %s\nCategoria: %s" %(self.placa, self.proprietario, self.modelo, self.categoria)
+
+

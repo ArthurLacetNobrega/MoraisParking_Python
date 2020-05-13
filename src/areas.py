@@ -39,6 +39,9 @@ class Areas():
     def __str__(self):
         return "Nome: %s\nCapacidade: %d\nCategoria: %s" %(self.nome, self.capacidade, self.categoria)
 
+    def check(self):
+        for veic in self.get_veiculos_area():
+            print(veic)
 
 
 

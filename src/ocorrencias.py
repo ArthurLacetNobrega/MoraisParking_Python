@@ -38,11 +38,11 @@ class Ocorrencia():
     def get_data(self):
         return self.data
 
-    def get_data(self, data):
+    def set_data(self, data):
         self.data = data
 
     def get_hora(self):
-        return self._hora
+        return self.hora
 
     def set_hora(self, hora):
         self.hora = hora
@@ -59,7 +59,10 @@ class Ocorrencia():
 
     #To String
     def __str__(self):
-        return "ID: %s\n Tipo: %s\n Quantidade de Veículos: %d\n Veículos: %s\n Data: %s\n Hora: %s\n Fatos: %s\n" %(self.id, self.tipo, self.quantidade_veiculos, self.veiculos_ocorrencias, self.data, self.hora, self.fatos)
+        placas = []
+        for veiculo in self.veiculos_ocorrencias:
+            placas.append(veiculo.get_placa())
+        return "ID: %s\nTipo: %s\nQuantidade de Veículos: %d\nVeículos: %s\nData: %s\nHora: %s\nFatos: %s\n" %(self.id, self.tipo, self.quantidade_veiculos, placas, self.data, self.hora, self.fatos)
 
 
 
