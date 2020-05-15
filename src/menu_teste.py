@@ -15,8 +15,6 @@ def upload_bd():
     estacionamento.armazenar_proprietarios()
     estacionamento.armazenar_areas()
     estacionamento.armazenar_usuarios()
-    estacionamento.armazenar_entradas()
-    estacionamento.armazenar_saidas()
     estacionamento.armazenar_ocorrencias()
 
 def login():
@@ -64,7 +62,7 @@ def principal():
         ("Veículos", menu_veiculos),
         ("Controle de Acessos", menu_acessos),
         ("Ocorrências", menu_ocorrencias),
-        ("Áreas", menu_areas)
+        ("Áreas", menu_areas),
     ]
     return menu("Morais' Parking", opcoes)
 
@@ -92,6 +90,7 @@ def remover_veiculo():
     estacionamento.remover_veiculo(input('Placa: '))
 
 def consultar_proprietario():
+    print('************ CONSULTAR PROPRIETARIO *************')
     estacionamento.consultar_proprietario(input('Placa: '))
 
 def menu_acessos():
@@ -103,12 +102,15 @@ def menu_acessos():
     return menu("Controle de Acessos", opcoes)
 
 def registrar_entrada():
+    print('************ REGISTRAR ENTRADA *************')
     estacionamento.validar_entrada(input('Placa: '))
 
 def registrar_saida():
+    print('************ REGISTRAR SAIDA *************')
     estacionamento.validar_saida(input('Placa: '))
 
 def verificar_ocupacao():
+    print('************ CONSULTAR OCUPAÇÃO *************')
     print("Informe qual destas categorias desejas consultar a ocupação: ", estacionamento.get_categorias())
     categoria = input('Categoria: ')
     percent = estacionamento.ocupacao_areas(categoria)
@@ -122,18 +124,25 @@ def menu_ocorrencias():
     return menu("Ocorrências", opcoes)
 
 def cadastrar_ocorrencia():
+    print('************ CADASTRAR OCORRENCIA *************')
     print('Lembrete: os tipos de ocorrência devem ser: ', estacionamento.tipo_ocorrencias)
     estacionamento.cadastrar_ocorrencia(int(input('ID: ')), input("Tipo: "), int(input('Quantidade de Veículos: ')),
                                         input('Data: '), input('Hora: '), input('Fatos: '))
 def menu_consulta_ocorrencia():
     opcoes = [
-        ("Consultar por ID", consultar_ocorrencia_id)
+        ("Consultar por ID", consultar_ocorrencia_id),
+        ("Consultar por Placa", consultar_ocorrencia_placa)
 
     ]
     return menu("Consultar Ocorrência", opcoes)
 
 def consultar_ocorrencia_id():
+    print('************ CONSULTAR OCORRENCIA *************')
     estacionamento.consultar_ocorrencia_id(int(input('ID: ')))
+
+def consultar_ocorrencia_placa():
+    print('************ CONSULTAR OCORRENCIA *************')
+    estacionamento.consultar_ocorrencia_placa(input('Placa: '))
 
 def menu_areas():
     opcoes = [
@@ -144,10 +153,12 @@ def menu_areas():
     return menu("Áreas", opcoes)
 
 def cadastrar_area():
+    print('************ CADASTRAR ÁREA *************')
     estacionamento.cadastrar_area(input('Nome: '), int(input('Capacidade: ')), input('Categoria: '))
 
 def verificar_status():
-    estacionamento.status_areas()
+    print('************ CONSULTAR STATUS *************')
+    estacionamento.status_areas(input('Categoria Área: '))
 
 def menu_consulta_area():
     opcoes = [
@@ -157,6 +168,7 @@ def menu_consulta_area():
     return menu("Consultar Área", opcoes)
 
 def consulta_area_nome():
+    print('************ CONSULTAR ÁREA *************')
     areas = []
     for area in estacionamento.controle_areas:
         areas.append(area.get_nome())
@@ -164,6 +176,7 @@ def consulta_area_nome():
     print(estacionamento.consultar_area_nome(input("Nome: ")))
 
 def consulta_area_categoria():
+    print('************ CONSULTAR ÁREA *************')
     print("Informe qual destas categorias desejas consultar: ", estacionamento.get_categorias())
     print(estacionamento.consultar_area_categoria(input("Categoria: ")))
 

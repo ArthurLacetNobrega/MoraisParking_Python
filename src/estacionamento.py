@@ -19,12 +19,12 @@ class Estacionamento:
         self.cadastro_veiculos = list()
         self.cadastro_ocorrencias = list()
         self.cadastro_proprietarios = {}
-        self.categorias = ['PREFERENCIAL','FUNCIONARIOS', 'CARRO', 'MOTOCICLETA', 'VAN', 'ONIBUS']
+        self.categorias = ['PREFERENCIAL','FUNCIONARIOS', 'CARRO', 'MOTOCICLETA', 'VAN', 'ÔNIBUS', 'VISITANTES']
         self.tipo_ocorrencias = ['FURTO', 'COLISAO', 'ATROPELAMENTO', 'AVARIA']
         self.cadastro_usuario = list()
         self.controle_eventos = list()
-        self.registro_entradas = {}
-        self.registro_saidas = {}
+        self.lista_ocupacao = list()
+
 
     #getters
     def get_controle_areas(self):
@@ -46,6 +46,7 @@ class Estacionamento:
         return self.cadastro_usuario
 
     def get_controle_eventos(self):
+
         return self.controle_eventos
 
     #METODOS RELACIONADOS A CATEGORIAS
@@ -62,22 +63,31 @@ class Estacionamento:
 
     # METODOS RELACIONADOS A VEICULOS e PROPRIETARIOS
     def cadastrar_veiculo(self, nome, matricula, curso, placa, modelo, categoria):
-        #cadastra o proprietário no dicionario e no BD
-        prop = Proprietario(nome.upper(), matricula.upper(), curso.upper())
-        c.execute(
-            'CREATE TABLE IF NOT EXISTS proprietarios(placa TEXT PRIMARY KEY, nome TEXT, matricula TEXT, curso TEXT)')
-        c.execute('INSERT INTO proprietarios VALUES (?, ?, ?,?)',
-                  (placa.upper(), prop.get_nome(), prop.get_matricula(), prop.get_curso()))
-        con.commit()
-        self.armazenar_proprietarios()
+        if self.validar_veiculo(placa.upper()) == None:
+            #cadastra o proprietário no dicionario e no BD
+            prop = Proprietario(nome.upper(), matricula.upper(), curso.upper())
+            c.execute(
+                'CREATE TABLE IF NOT EXISTS proprietarios(placa TEXT PRIMARY KEY, nome TEXT, matricula TEXT, curso TEXT)')
+            c.execute('INSERT INTO proprietarios VALUES (?, ?, ?,?)',
+                      (placa.upper(), prop.get_nome(), prop.get_matricula(), prop.get_curso()))
+            con.commit()
+            self.armazenar_proprietarios()
 
-        #Cadastra o veiculo no dicionario e no array
-        veic = Veiculo(placa.upper(),prop.get_nome(), modelo.upper(), categoria.upper())
-        c.execute(
-            'CREATE TABLE IF NOT EXISTS veiculos(placa TEXT PRIMARY KEY, proprietario TEXT, modelo TEXT, categoria TEXT)')
-        c.execute('INSERT INTO veiculos VALUES (?, ?, ?,?)', (veic.get_placa(), prop.get_nome(), veic.get_modelo(), veic.get_categoria()))
-        con.commit()
-        self.armazenar_veiculos()
+            #Cadastra o veiculo no dicionario e no array
+            veic = Veiculo(placa.upper(),prop.get_nome(), modelo.upper(), categoria.upper())
+            c.execute(
+                'CREATE TABLE IF NOT EXISTS veiculos(placa TEXT PRIMARY KEY, proprietario TEXT, modelo TEXT, categoria TEXT)')
+            c.execute('INSERT INTO veiculos VALUES (?, ?, ?,?)', (veic.get_placa(), prop.get_nome(), veic.get_modelo(), veic.get_categoria()))
+            con.commit()
+            self.armazenar_veiculos()
+        else:
+            print('Veículo já está cadastrado!')
+            resposta = input('Deseja cadastrá-lo novamente? (S/N) ')
+            if resposta.upper() == 'S':
+                self.remover_veiculo(placa.upper())
+                self.cadastrar_veiculo(input('Nome: '), input('Matícula: '), input('Curso: '), input('Placa: '),
+                                     input('Modelo: '), input('Categoria: '))
+
 
     def consultar_proprietario(self, placa):
         placa_busca = placa.upper()
@@ -101,6 +111,8 @@ class Estacionamento:
         #remove da base de dados
         c.execute("DELETE FROM veiculos WHERE placa = ?", (placa.upper(),))
         con.commit()
+        c.execute("DELETE FROM proprietarios WHERE placa = ?", (placa.upper(),))
+        con.commit()
 
         #remove da lista
         veiculo = self.validar_veiculo(placa.upper())
@@ -112,28 +124,43 @@ class Estacionamento:
         hora_em_texto = data_atual.strftime('%H:%M')
         if self.validar_veiculo(placa.upper()) != None:
             veic = self.validar_veiculo(placa.upper())
+            for area in self.get_controle_areas():
+                if area.get_categoria().upper() == veic.get_categoria().upper():
+                    area.entrada_veiculo(veic)
             c.execute(
                 'CREATE TABLE IF NOT EXISTS entradas(data TEXT, hora TEXT,placa TEXT,categoria TEXT)')
             c.execute('INSERT INTO entradas VALUES (?,?,?,?)',
                       (data_em_texto, hora_em_texto, veic.get_placa().upper(), veic.get_categoria()))
             con.commit()
-            self.armazenar_entradas()
+            self.lista_ocupacao.append(veic.get_placa())
             print('Entrada Registrada!')
         else:
             print('ATENÇÃO! Veículo não cadastrado!')
+            resposta = input('Deseja permitir entrada como Visitante? (S/N) ')
+            if resposta.upper() == "S":
+                self.cadastrar_veiculo('Visitante', 'n/a', 'n/a', placa.upper(),
+                                     'n/a', 'VISITANTES')
+                self.validar_entrada(placa)
+            else:
+                return
 
     def validar_saida(self, placa):
         data_atual = datetime.today()
         data_em_texto = data_atual.strftime('%d/%m/%Y')
         hora_em_texto = data_atual.strftime('%H:%M')
-        if placa.upper() in self.registro_entradas.keys():
+        if placa.upper() in self.lista_ocupacao:
             veic = self.validar_veiculo(placa.upper())
             c.execute(
                 'CREATE TABLE IF NOT EXISTS saidas(data TEXT, hora TEXT,placa TEXT,categoria TEXT)')
             c.execute('INSERT INTO saidas VALUES (?,?,?,?)',
                       (data_em_texto, hora_em_texto, veic.get_placa().upper(), veic.get_categoria()))
             con.commit()
-            self.armazenar_saidas()
+            for area in self.get_controle_areas():
+                if area.get_categoria().upper() == veic.get_categoria().upper():
+                    area.saida_veiculo(veic)
+            self.lista_ocupacao.remove(placa.upper())
+            if veic.get_categoria() == 'VISITANTES':
+                self.remover_veiculo(placa.upper())
             print('Saída Registrada!')
         else:
             print("Entrada não registrada!")
@@ -165,25 +192,31 @@ class Estacionamento:
         else:
             return "A categoria não possui área específica!"
 
+    def alterar_capacidade(self):
+        pass
+
+    def excluir_area(self):
+        pass
+
     def ocupacao_areas(self, categoria):
         '''Mostra o percentual de ocupação da área'''
         percent = 0
         cap_total = 0
-        ocup_total = 0
+        ocup_total = 0 #remover
         for area in self.controle_areas:
             if categoria.upper() == area.get_categoria():
                 quantidade = len(area.get_veiculos_area())
-                ocup_total += quantidade
+                ocup_total += quantidade #remover
                 cap_total += area.get_capacidade()
                 percent = (ocup_total * 100 / cap_total)
         return percent
 
-    def status_areas(self, nome):
+    def status_areas(self, categoria):
         '''Mostra os veículos que estão em cada área, naquele instante'''
         for area in self.controle_areas:
-            print(area.get_categoria())
-            for veiculo in area.get_veiculos_area():
-                print(veiculo)
+            if categoria.upper() == area.get_categoria():
+                for veiculo in area.get_veiculos_area():
+                    print(veiculo)
 
     #METODOS RELACIONADOS A USUARIOS
     def cadastrar_usuario(self,nome, cpf, funcao, setor, usuario, senha):
@@ -233,6 +266,7 @@ class Estacionamento:
                 con.commit()
             else:
                 print("Veículo não cadastrado!")
+        print('O ID desta ocorrência é: ', ocorrencia.get_id())
         self.armazenar_ocorrencias()
 
     def consultar_ocorrencia_id(self, id):
@@ -243,18 +277,25 @@ class Estacionamento:
                 print('Ocorrência não localizada!')
 
     def consultar_ocorrencia_placa(self, placa):
-        pass
+        c.execute("SELECT * FROM veiculos_ocorrencias WHERE placa = ?", (placa.upper(),))
+        for linha in c.fetchall():
+            id = linha[0]
+            c.execute("SELECT * FROM ocorrencias WHERE id = ?", (id,))
+            for linha in c.fetchall():
+                print(linha)
 
         # METODOS RELACIONADOS A EVENTOS
     def cadastrar_evento(self, nome, data_inicio, duracao, vagas):
-        i = 0
-        data = date = datetime.strptime(data_inicio, '%d/%m/%Y').date()
+        data = datetime.strptime(data_inicio, '%d/%m/%Y').date()
         for i in range(duracao):
             data_nova = data + timedelta(days=i)
             evento = Eventos(nome, data_nova, duracao, vagas)
             self.controle_eventos.append(evento)
 
-     # MÉTODOS ARMAZENAMENTO
+    def consultar_evento(self, nome):
+        pass
+
+     # MÉTODOS ARMAZENAMENTO - QUE REINSEREM NAS LISTAS, DICIONÁRIOS, OS VALORES JÁ REGISTRADOS
     def armazenar_veiculos(self):
         c.execute("SELECT * FROM veiculos ")
         for linha in c.fetchall():
@@ -295,38 +336,6 @@ class Estacionamento:
             senha = linha[5]
             user = Usuario(nome, cpf, funcao, setor, usuario, senha)
             self.cadastro_usuario.append(user)
-
-    def armazenar_entradas(self):
-        c.execute("SELECT * FROM entradas ")
-        for linha in c.fetchall():
-            data = linha[0]
-            hora = linha[1]
-            placa = linha[2]
-            categoria = linha[3]
-            self.registro_entradas[placa] = [data, hora, categoria]
-        c.execute("SELECT placa FROM entradas")
-        for linha in c.fetchall():
-            placa = linha[0]
-            veic = self.validar_veiculo(placa.upper())
-            for area in self.get_controle_areas():
-                if area.get_categoria().upper() == veic.get_categoria().upper():
-                    area.entrada_veiculo(veic)
-
-    def armazenar_saidas(self):
-        c.execute("SELECT * FROM saidas ")
-        for linha in c.fetchall():
-            data = linha[0]
-            hora = linha[1]
-            placa = linha[2]
-            categoria = linha[3]
-            self.registro_saidas[placa] = [data, hora, categoria]
-        c.execute("SELECT placa FROM saidas")
-        for linha in c.fetchall():
-            placa = linha[0]
-            veic = self.validar_veiculo(placa.upper())
-            for area in self.get_controle_areas():
-                if area.get_categoria().upper() == veic.get_categoria().upper():
-                    area.saida_veiculo(veic)
 
     def armazenar_ocorrencias(self):
         c.execute("SELECT * FROM ocorrencias ")
