@@ -23,6 +23,7 @@ class Estacionamento:
         self.tipo_ocorrencias = ['FURTO', 'SINISTRO', 'ESTACIONAMENTO INDEVIDO', 'AVARIA', 'INUNDAÇÃO', 'OUTROS']
         self.cadastro_usuario = list()
         self.controle_eventos = list()
+        self.cadastro_evento = list()
         self.lista_ocupacao = list()
 
     #getters
@@ -34,6 +35,9 @@ class Estacionamento:
 
     def get_cadastro_ocorrencias(self):
         return self.cadastro_ocorrencias
+
+    def get_cadastro_eventos(self):
+        return self.cadastro_evento
 
     def get_categorias(self):
         return self.categorias
@@ -369,6 +373,16 @@ class Estacionamento:
                 placa = linha[1]
                 veiculo = self.validar_veiculo(placa.upper())
                 ocorrencia.adicionar_veiculo(veiculo)
+
+    def armazenar_eventos(self):
+        c.execute("SELECT * FROM cadastro_de_eventos ")
+        for linha in c.fetchall():
+            nome = linha[0]
+            data_inicio = linha[1]
+            duracao = linha[2]
+            vaga = linha[3]
+            evento = Eventos(nome, data_inicio, duracao, vaga)
+            self.cadastrar_evento = evento
 
 
 
