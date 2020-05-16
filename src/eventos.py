@@ -53,7 +53,7 @@ class Eventos():
         con.commit()
         self.armazenar_eventos()
 
-
+#certificar se esta armazenando
     def armazenar_eventos(self):
         c.execute("SELECT * FROM proprietarios ")
         for linha in c.fetchall():
