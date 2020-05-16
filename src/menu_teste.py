@@ -1,10 +1,9 @@
 from estacionamento import Estacionamento
 from datetime import datetime
 import getpass
-
 from eventos import Eventos
 
-evento = Eventos()
+eventos = Eventos()
 estacionamento = Estacionamento()
 
 data_atual = datetime.today()
@@ -17,7 +16,7 @@ def upload_bd():
     estacionamento.armazenar_areas()
     estacionamento.armazenar_usuarios()
     estacionamento.armazenar_ocorrencias()
-    evento.armazenar_eventos()
+    eventos.armazenar_eventos()
 
 
 def login():
@@ -227,7 +226,7 @@ def excluir_area():
 
 def cadastrar_evento():
     print('************ CADASTRAR ÁREA *************')
-    evento.cadastrar_evento(input('Nome: '), input('Duração: '), input('Data de Inicio: '))
+    eventos.cadastro_evento(input('Nome: '), input('Duração: '), input('Data de Inicio: '), input('vaga: '))
 
 
 login()

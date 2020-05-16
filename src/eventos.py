@@ -6,7 +6,7 @@ c = con.cursor()
 class Eventos():
     """Representa os eventos que podem acontecer, que reduzem a capacidade e modificam o acesso de veiculos"""
 
-    def __init__(self, nome, data_inicio, duracao, vagas):
+    def __init__(self, nome: object, data_inicio: object, duracao: object, vagas: object) -> object:
         self.nome = nome
         self.data_inicio = data_inicio
         self.duracao = duracao
@@ -53,7 +53,7 @@ class Eventos():
         con.commit()
         self.armazenar_eventos()
 
-#certificar se esta armazenando
+    #certificar se esta armazenando
     def armazenar_eventos(self):
         c.execute("SELECT * FROM proprietarios ")
         for linha in c.fetchall():
