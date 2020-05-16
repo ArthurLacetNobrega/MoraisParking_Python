@@ -31,7 +31,13 @@ def login():
     #senha = getpass.getpass(prompt='Senha: ', stream=None) #não funciona no pycharm, mas no prompt
 
     if estacionamento.login(usuario, senha):
-        principal()
+        user = estacionamento.validar_usuario(usuario)
+        if user.get_funcao() == 'GESTOR':
+            principal_gestor()
+        elif user.get_funcao() == 'RH':
+            principal_rh()
+        else:
+            principal_func_est()
     else:
         print("Usuário ou senha inválido! Tente novamente!\n\n")
         login()
@@ -57,7 +63,25 @@ def menu(titulo, opcoes):
                 continue
         print("Opção inválida. Escolha novamente! \n\n")
 
-def principal():
+def principal_gestor():
+    opcoes = [
+        ("Veículos", menu_veiculos),
+        ("Controle de Acessos", menu_acessos),
+        ("Ocorrências", menu_ocorrencias),
+        ("Áreas", menu_areas),
+    ]
+    return menu("Morais' Parking", opcoes)
+
+def principal_rh():
+    opcoes = [
+        ("Veículos", menu_veiculos),
+        ("Controle de Acessos", menu_acessos),
+        ("Ocorrências", menu_ocorrencias),
+        ("Áreas", menu_areas),
+    ]
+    return menu("Morais' Parking", opcoes)
+
+def principal_func_est():
     opcoes = [
         ("Veículos", menu_veiculos),
         ("Controle de Acessos", menu_acessos),
@@ -126,8 +150,9 @@ def menu_ocorrencias():
 def cadastrar_ocorrencia():
     print('************ CADASTRAR OCORRENCIA *************')
     print('Lembrete: os tipos de ocorrência devem ser: ', estacionamento.tipo_ocorrencias)
-    estacionamento.cadastrar_ocorrencia(int(input('ID: ')), input("Tipo: "), int(input('Quantidade de Veículos: ')),
+    ocorrencia = estacionamento.cadastrar_ocorrencia(input("Tipo: "), int(input('Quantidade de Veículos: ')),
                                         input('Data: '), input('Hora: '), input('Fatos: '))
+
 def menu_consulta_ocorrencia():
     opcoes = [
         ("Consultar por ID", consultar_ocorrencia_id),
@@ -147,8 +172,10 @@ def consultar_ocorrencia_placa():
 def menu_areas():
     opcoes = [
         ("Cadastrar Área", cadastrar_area),
-        ("Consultar Área", menu_consulta_area),
+        ("Consultar Área", consultar_area),
+        ("Excluir Área", excluir_area),
         ("Status", verificar_status)
+
     ]
     return menu("Áreas", opcoes)
 
@@ -160,24 +187,15 @@ def verificar_status():
     print('************ CONSULTAR STATUS *************')
     estacionamento.status_areas(input('Categoria Área: '))
 
-def menu_consulta_area():
-    opcoes = [
-        ("Consultar por Nome", consulta_area_nome),
-        ("Consultar por Categoria", consulta_area_categoria)
-    ]
-    return menu("Consultar Área", opcoes)
-
-def consulta_area_nome():
-    print('************ CONSULTAR ÁREA *************')
-    areas = []
-    for area in estacionamento.controle_areas:
-        areas.append(area.get_nome())
-    print("As opções de Áreas são: ", str(areas))
-    print(estacionamento.consultar_area_nome(input("Nome: ")))
-
-def consulta_area_categoria():
+def consultar_area():
     print('************ CONSULTAR ÁREA *************')
     print("Informe qual destas categorias desejas consultar: ", estacionamento.get_categorias())
-    print(estacionamento.consultar_area_categoria(input("Categoria: ")))
+    estacionamento.consultar_area(input("Área: "))
+
+def excluir_area():
+    print('************ EXCLUIR ÁREA *************')
+    print("Informe qual destas áreas desejas excluir: ", estacionamento.get_categorias())
+    estacionamento.excluir_area(input('Área: '))
+
 
 login()

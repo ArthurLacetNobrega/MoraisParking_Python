@@ -20,11 +20,10 @@ class Estacionamento:
         self.cadastro_ocorrencias = list()
         self.cadastro_proprietarios = {}
         self.categorias = ['PREFERENCIAL','FUNCIONARIOS', 'CARRO', 'MOTOCICLETA', 'VAN', 'ÔNIBUS', 'VISITANTES']
-        self.tipo_ocorrencias = ['FURTO', 'COLISAO', 'ATROPELAMENTO', 'AVARIA']
+        self.tipo_ocorrencias = ['FURTO', 'SINISTRO', 'ESTACIONAMENTO INDEVIDO', 'AVARIA', 'INUNDAÇÃO', 'OUTROS']
         self.cadastro_usuario = list()
         self.controle_eventos = list()
         self.lista_ocupacao = list()
-
 
     #getters
     def get_controle_areas(self):
@@ -46,7 +45,6 @@ class Estacionamento:
         return self.cadastro_usuario
 
     def get_controle_eventos(self):
-
         return self.controle_eventos
 
     #METODOS RELACIONADOS A CATEGORIAS
@@ -167,7 +165,10 @@ class Estacionamento:
 
     # METODOS RELACIONADOS A ÁREAS
     def cadastrar_area(self, nome, capacidade, categoria):
+        '''O usuário cadastra as áreas, de acordo com as categorias pré-definidas'''
         area = Areas(nome.upper(), capacidade, categoria.upper())
+
+        #inserção no banco
         c.execute(
             'CREATE TABLE IF NOT EXISTS areas(nome TEXT, capacidade INT, categoria TEXT)')
         c.execute('INSERT INTO areas VALUES (?, ?, ?)',
@@ -175,13 +176,7 @@ class Estacionamento:
         con.commit()
         self.armazenar_areas()
 
-    def consultar_area_nome(self, nome):
-        for area in self.controle_areas:
-            if nome.upper() == area.get_nome():
-                return area
-        return None
-
-    def consultar_area_categoria(self, categoria):
+    def consultar_area(self, categoria):
         categ_areas = {}
         for area in self.controle_areas:
             if categoria.upper() == area.get_categoria():
@@ -192,23 +187,42 @@ class Estacionamento:
         else:
             return "A categoria não possui área específica!"
 
-    def alterar_capacidade(self):
-        pass
+    def alterar_capacidade(self, categoria, vagas):
+        '''Método será utilizado nos dias de evento, onde a capacidade da área identificada será reduzida'''
+        #alteração da capacidade no objeto Area
+        for area in self.controle_areas:
+            if categoria.upper() == area.get_categoria():
+                nova_capacidade = area.get_capacidade() - vagas
+                area.set_capacidade(nova_capacidade)
 
-    def excluir_area(self):
-        pass
+                # alteração da capacidade no Banco
+                c.execute('UPDATE areas SET capacidade = ? WHERE categoria = ?',(nova_capacidade, categoria.upper()))
+                con.commit()
+            else:
+                print('Área não cadastrada!')
+
+
+    def excluir_area(self, categoria):
+        '''Método utilizado pelo gestor, caso ele queira remover alguma área'''
+        for area in self.controle_areas:
+            if categoria.upper() == area.get_categoria():
+                self.controle_areas.remove(categoria.upper())
+
+                #exclusão do Banco
+                c.execute('DELETE FROM areas WHERE categoria = ?', (categoria.upper()),)
+                con.commit()
+            else:
+                print('Área não cadastrada!')
 
     def ocupacao_areas(self, categoria):
         '''Mostra o percentual de ocupação da área'''
         percent = 0
-        cap_total = 0
-        ocup_total = 0 #remover
+        ocup_total = 0
         for area in self.controle_areas:
             if categoria.upper() == area.get_categoria():
                 quantidade = len(area.get_veiculos_area())
-                ocup_total += quantidade #remover
-                cap_total += area.get_capacidade()
-                percent = (ocup_total * 100 / cap_total)
+                ocup_total += quantidade
+                percent = (ocup_total * 100 / area.get_capacidade())
         return percent
 
     def status_areas(self, categoria):
@@ -228,9 +242,9 @@ class Estacionamento:
         con.commit()
         self.armazenar_usuarios()
 
-    def validar_usuario(self, nome_usuario):
+    def validar_usuario(self, user):
         for usuario in self.cadastro_usuario:
-            if nome_usuario == usuario.get_usuario():
+            if user == usuario.get_usuario():
                 return usuario
         return None
 
@@ -248,12 +262,13 @@ class Estacionamento:
     def validar_tipo_ocorrencia(self):
         pass
 
-    def cadastrar_ocorrencia(self, id, tipo, quantidade_veiculos, data, hora, fatos):
+    def cadastrar_ocorrencia(self, tipo, quantidade_veiculos, data, hora, fatos):
+        id = len(self.cadastro_ocorrencias) + 1
         ocorrencia = Ocorrencia(id, tipo.upper(), quantidade_veiculos, data, hora, fatos)
         c.execute(
             'CREATE TABLE IF NOT EXISTS ocorrencias (id INTEGER, tipo TEXT, quantidade_veiculos INTEGER, data TEXT, hora TEXT, fatos TEXT)')
         c.execute('INSERT INTO ocorrencias VALUES (?, ?, ?, ?, ?, ?)',
-                  (ocorrencia.get_id(), ocorrencia.get_tipo(), ocorrencia.get_quantidade_veiculos(), ocorrencia.get_data(), ocorrencia.get_hora(),
+                  (id, ocorrencia.get_tipo(), ocorrencia.get_quantidade_veiculos(), ocorrencia.get_data(), ocorrencia.get_hora(),
                    ocorrencia.get_fatos()))
         con.commit()
         for i in range(quantidade_veiculos):
@@ -266,7 +281,7 @@ class Estacionamento:
                 con.commit()
             else:
                 print("Veículo não cadastrado!")
-        print('O ID desta ocorrência é: ', ocorrencia.get_id())
+        print('Para acompanhamento, o ID desta ocorrência é: ', id)
         self.armazenar_ocorrencias()
 
     def consultar_ocorrencia_id(self, id):
