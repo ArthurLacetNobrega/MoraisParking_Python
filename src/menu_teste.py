@@ -2,6 +2,7 @@ from estacionamento import Estacionamento
 from datetime import datetime
 import getpass
 from eventos import Eventos
+from eventos import *
 
 estacionamento = Estacionamento()
 
@@ -113,11 +114,11 @@ def menu_veiculos():
 
 def menu_eventos():
     opcoes = [
-        ("Cadastrar", Eventos.cadastrar_evento),
-        ("Consultar por nome", Eventos.consultar_evento_por_nome),
-        ("Listar todos", Eventos.consultar_eventos),
-        ("Atualizar", Eventos.atualizar_evento),
-        ("Remover", Eventos.remover_evento),
+        ("Cadastrar", cadastrar_evento),
+        ("Consultar por nome", consultar_evento_por_nome),
+        ("Listar todos", consultar_eventos),
+        ("Atualizar", atualizar_evento),
+        ("Remover", remover_evento),
     ]
 
     return menu("Eventos", opcoes)

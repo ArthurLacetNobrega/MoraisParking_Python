@@ -3,7 +3,7 @@ from proprietario import Proprietario
 from usuario import Usuario
 from veiculo import Veiculo
 from ocorrencias import Ocorrencia
-from eventos import Eventos
+from eventos_db import Eventos
 from datetime import datetime, timedelta
 import sqlite3
 
