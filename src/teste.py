@@ -1,5 +1,5 @@
-from areas import Areas
-import eventos
+'''from areas import Areas
+from eventos import Eventos
 from proprietario import Proprietario
 from usuario import Usuario
 from veiculo import Veiculo
@@ -7,17 +7,10 @@ from ocorrencias import Ocorrencia
 from estacionamento import Estacionamento
 
 estacionamento = Estacionamento()
-eve = eventos.Eventos()
 
 #cadastrar evento
 
-eve.cadastrar_evento("Inova Uniesp", "15/1/2020", "7 dias", "20")
-eve.cadastrar_evento("Feira de ADM", "05/09/2020", "5 dias", "20")
-print(eve)
 
-#cadastrar area
-estacionamento.cadastrar_area("Carros", 10, "carro")
-estacionamento.cadastrar_area("Motos", 5, 'moto')
 
 
 #validar veiculo
@@ -94,4 +87,4 @@ print('Eventos:')
 estacionamento.cadastrar_evento('Inova', '25/05/2020', 5, 500)
 
 for evento in estacionamento.get_controle_eventos():
-    print(evento)
+    print(evento)'''

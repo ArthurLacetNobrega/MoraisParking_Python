@@ -1,4 +1,3 @@
-import sqlite3
 
 class Proprietario:
     """ Representa o proprietário do veículo"""

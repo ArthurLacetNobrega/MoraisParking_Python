@@ -1,9 +1,9 @@
 from areas import Areas
-from eventos import Eventos
 from proprietario import Proprietario
 from usuario import Usuario
 from veiculo import Veiculo
 from ocorrencias import Ocorrencia
+from eventos import Eventos
 from datetime import datetime, timedelta
 import sqlite3
 
@@ -22,9 +22,8 @@ class Estacionamento:
         self.categorias = ['PREFERENCIAL','FUNCIONARIOS', 'CARRO', 'MOTOCICLETA', 'VAN', 'ÔNIBUS', 'VISITANTES']
         self.tipo_ocorrencias = ['FURTO', 'SINISTRO', 'ESTACIONAMENTO INDEVIDO', 'AVARIA', 'INUNDAÇÃO', 'OUTROS']
         self.cadastro_usuario = list()
-        self.controle_eventos = list()
-        self.cadastro_evento = list()
         self.lista_ocupacao = list()
+        self.lista_de_eventos = []
 
     #getters
     def get_controle_areas(self):
@@ -36,9 +35,6 @@ class Estacionamento:
     def get_cadastro_ocorrencias(self):
         return self.cadastro_ocorrencias
 
-    def get_cadastro_eventos(self):
-        return self.cadastro_evento
-
     def get_categorias(self):
         return self.categorias
 
@@ -48,8 +44,7 @@ class Estacionamento:
     def get_cadastro_usuario(self):
         return self.cadastro_usuario
 
-    def get_controle_eventos(self):
-        return self.controle_eventos
+
 
     #METODOS RELACIONADOS A CATEGORIAS
     def adicionar_categoria(self, categoria):
@@ -288,6 +283,7 @@ class Estacionamento:
         print('Para acompanhamento, o ID desta ocorrência é: ', id)
         self.armazenar_ocorrencias()
 
+
     def consultar_ocorrencia_id(self, id):
         for ocorrencia in self.get_cadastro_ocorrencias():
             if id == ocorrencia.get_id():
@@ -303,18 +299,17 @@ class Estacionamento:
             for linha in c.fetchall():
                 print(linha)
 
-        # METODOS RELACIONADOS A EVENTOS
-    def cadastrar_evento(self, nome, data_inicio, duracao, vagas):
-        data = datetime.strptime(data_inicio, '%d/%m/%Y').date()
-        for i in range(duracao):
-            data_nova = data + timedelta(days=i)
-            evento = Eventos(nome, data_nova, duracao, vagas)
-            self.controle_eventos.append(evento)
-
-    def consultar_evento(self, nome):
-        pass
 
      # MÉTODOS ARMAZENAMENTO - QUE REINSEREM NAS LISTAS, DICIONÁRIOS, OS VALORES JÁ REGISTRADOS
+
+    '''Carrega os dados da tabela cadastro_eventos na lista (lista_de_eventos),
+        que é um dos atributos da classe Estacionamento'''
+    #Função desnecessário pois os dados já estão armazenados no banco de dados
+    #havendo necessidade se faz uma busca
+    def armazenar_eventos(self):
+        for tupla_evento in Eventos.all():
+            self.lista_de_eventos.append(tupla_evento)
+
     def armazenar_veiculos(self):
         c.execute("SELECT * FROM veiculos ")
         for linha in c.fetchall():
@@ -373,16 +368,6 @@ class Estacionamento:
                 placa = linha[1]
                 veiculo = self.validar_veiculo(placa.upper())
                 ocorrencia.adicionar_veiculo(veiculo)
-
-    def armazenar_eventos(self):
-        c.execute("SELECT * FROM cadastro_de_eventos ")
-        for linha in c.fetchall():
-            nome = linha[0]
-            data_inicio = linha[1]
-            duracao = linha[2]
-            vaga = linha[3]
-            evento = Eventos(nome, data_inicio, duracao, vaga)
-            self.cadastrar_evento = evento
 
 
 

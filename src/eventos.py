@@ -6,59 +6,123 @@ c = con.cursor()
 class Eventos():
     """Representa os eventos que podem acontecer, que reduzem a capacidade e modificam o acesso de veiculos"""
 
-    def __init__(self, nome: object, data_inicio: object, duracao: object, vagas: object) -> object:
+    def __init__(self, nome, data_inicio, duracao, vagas):
         self.nome = nome
         self.data_inicio = data_inicio
         self.duracao = duracao
         self.vagas = vagas
 
 
-    #Getters & Setters
-    def get_nome(self):
-        return self.nome
-
-    def set_nome (self, nome):
-        self._nome = nome
-
-    def get_data_inicio(self):
-        return self.data_inicio
-
-    def set_data_inicio(self, data_inicio):
-        return self.data_inicio
-
-    def get_duracao(self):
-        return self.duracao
-
-    def set_duracao(self, duracao):
-        self.duracao = duracao
-
-    def get_vagas(self):
-        return self.vagas
-
-    def set_vagas(self, vagas):
-        self.vagas = vagas
-
     #To String
     def __str__(self):
-        return "Nome: %s\nData de Realização: %s\nDuração: %d\nVagas: %d" % (self.nome, self.data_inicio, self.duracao, self.vagas)
+        return f'Nome: {self.nome}\nData de Realização: {self.data_inicio}\nDuração: {self.duracao} Vagas: {self.vagas}'
+
+    def __repr__(self):
+        return f'Nome: {self.nome} Data de Realização: {self.data_inicio} Duração: {self.duracao}'
+
+    #criar tabela
+    #método estático para criação do método
+    @staticmethod
+    def criar_tabela():
+        try:
+            c.execute(
+                'CREATE TABLE IF NOT EXISTS eventos (nome text, data_inicio text, duracao text, vaga text)')
+        except:
+            print('Erro ao criar a tabela')
+
+    '''Metodo usada para buscar todos os itens da tabela eventos'''
+    @staticmethod
+    def all():
+        try:
+            r = c.execute('SELECT * FROM eventos')
+        except:
+            print('Erro ao fazer consulta')
+        else:
+            return r.fetchall()
 
 
-    def cadastro_evento(self, nome, data_inicio, duracao, vagas):
+    def salvar(self):
         '''cadastrando evento, a função sera chamada em estacionamento.py '''
-        evento = Eventos(nome.upper(), data_inicio.upper(), duracao.upper(), vagas.upper())
-        c.execute(
-            'CREATE TABLE IF NOT EXISTS cadastro_de_eventos(nome TEXT PRIMARY KEY, data_inicio TEXT, duracao TEXT, vagas TEXT)')
-        c.execute('INSERT INTO evento VALUES (?, ?, ?, ?)',
-                  (evento.get_nome(), evento.get_data_inicio(), evento.get_duracao(), evento.get_vagas()))
-        con.commit()
-        self.armazenar_eventos()
+        print("CADASTRO DE EVENTOS")
+        try:
+            c.execute("INSERT INTO eventos VALUES (?, ?, ?, ?)",
+                      (self.nome, self.data_inicio, self.duracao, self.vagas))
+            con.commit()
+        except:
+            print("HOUVE UM ERRO!")
+        else:
+            print("ADICIONADO!")
 
-    #certificar se esta armazenando
-    def armazenar_eventos(self):
-        c.execute("SELECT * FROM proprietarios ")
-        for linha in c.fetchall():
-            nome = linha[0]
-            data_inicio = linha[1]
-            duracao = linha[2]
-            vaga = linha[3]
-            eve = Eventos(nome, data_inicio, duracao, vaga)
+    @staticmethod
+    def cadastrar_evento():
+        print('************ CADASTRAR EVENTO *************')
+        Eventos(input("Nome: "), input("Data de Inicio: "), input("Duracao: "), input("Vagas")).salvar()
+
+    @staticmethod
+    def consultar_evento_por_nome():
+        evento = Eventos.buscar_por_nome()
+        if evento:
+            print(f'Evento: {evento}')
+        else:
+            print("Evento não encontrado")
+
+    @staticmethod
+    def buscar_por_nome():
+        return Eventos.buscar_evento(input("Digite o nome do Evento: "))
+
+    @staticmethod
+    def buscar_evento(nome):
+        try:
+            r = c.execute('SELECT * FROM eventos WHERE nome = ?', (nome,))
+            evento = r.fetchone()
+            print(evento)
+        except:
+            print('Erro ao fazer consulta')
+            evento = None
+        finally:
+            return evento
+
+    @staticmethod
+    def consultar_eventos():
+        for evento in Eventos.all():
+            print(f'Evento: {evento}')
+
+    @staticmethod
+    def remover_evento():
+        Eventos.excluir_evento(input("Nome do evento:"))
+
+    @staticmethod
+    def excluir_evento(nome):
+        try:
+            c.execute('DELETE FROM eventos WHERE nome = ?', (nome,))
+            con.commit()
+            print(f"O evento {nome} foi excluido com sucesso")
+        except:
+            print('Erro ao fazer EXCLUSÃO')
+
+    @staticmethod
+    def atualizar_evento():
+        Eventos.atualizar_evento_por_nome(input("Nome do evento:"))
+
+    @staticmethod
+    def ler_campo(valor_atual, campo):
+        valor_lido = input(f'{campo}')
+        return valor_atual if valor_lido == '' else valor_lido
+
+    @staticmethod
+    def atualizar_evento_por_nome(nome):
+        evento = Eventos.buscar_evento(nome)
+        if evento:
+            nome_atual, data_inicio_atual, duracao_atual, vagas_atual = evento
+            nome = Eventos.ler_campo(nome_atual, "Novo Nome: ")
+            data_inicio = Eventos.ler_campo(data_inicio_atual, "Nova data: ")
+            duracao = Eventos.ler_campo(duracao_atual, "Nova Duração: ")
+            vagas = Eventos.ler_campo(vagas_atual, "Novo número de vagas: ")
+            try:
+                c.execute("""UPDATE eventos SET 
+                        nome = ?, data_inicio = ?, duracao = ?, vaga = ? WHERE nome = ?""",
+                          (nome, data_inicio, duracao, vagas, nome_atual))
+                con.commit()
+                print(f"O evento {nome} foi atualizado com sucesso")
+            except:
+                print('Erro ao fazer ATUALIZAÇÃO')
