@@ -75,7 +75,6 @@ class Eventos():
         try:
             r = c.execute('SELECT * FROM eventos WHERE nome = ?', (nome,))
             evento = r.fetchone()
-            print(evento)
         except:
             print('Erro ao fazer consulta')
             evento = None
