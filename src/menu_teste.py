@@ -16,7 +16,6 @@ def upload_bd():
     estacionamento.armazenar_areas()
     estacionamento.armazenar_usuarios()
     estacionamento.armazenar_ocorrencias()
-    Eventos.criar_tabela()
     estacionamento.armazenar_eventos()
 
 

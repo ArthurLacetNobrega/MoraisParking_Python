@@ -23,6 +23,10 @@ class Estacionamento:
         self.tipo_ocorrencias = ['FURTO', 'SINISTRO', 'ESTACIONAMENTO INDEVIDO', 'AVARIA', 'INUNDAÇÃO', 'OUTROS']
         self.cadastro_usuario = list()
         self.lista_ocupacao = list()
+
+        #Cria a tabela eventos
+        Eventos.criar_tabela()
+        #Não foi necessário o uso desta lista, mantida pra ficar no padrão do projeto
         self.lista_de_eventos = []
 
     #getters
@@ -43,8 +47,6 @@ class Estacionamento:
 
     def get_cadastro_usuario(self):
         return self.cadastro_usuario
-
-
 
     #METODOS RELACIONADOS A CATEGORIAS
     def adicionar_categoria(self, categoria):
@@ -306,6 +308,7 @@ class Estacionamento:
         que é um dos atributos da classe Estacionamento'''
     #Função desnecessário pois os dados já estão armazenados no banco de dados
     #havendo necessidade se faz uma busca
+    # Não foi necessário o uso desta função, mantida pra ficar no padrão do projeto
     def armazenar_eventos(self):
         for tupla_evento in Eventos.all():
             self.lista_de_eventos.append(tupla_evento)
