@@ -1,64 +1,26 @@
-import sqlite3
+from eventos_db import *
 
-con = sqlite3.connect('database.db')
-c = con.cursor()
+def cadastrar_evento():
+    print('************ CADASTRAR EVENTO *************')
+    Eventos.salvar_evento(input("Nome: "), input("Data de Inicio: "), input("Duracao: "), input("Vagas"))
 
-class Eventos():
-    """Representa os eventos que podem acontecer, que reduzem a capacidade e modificam o acesso de veiculos"""
+def consultar_evento_por_nome():
+    print('************ CONSULTAR EVENTO POR NOME *************')
+    evento = Eventos.buscar_por_nome()
+    if evento:
+        print(f'Evento: {evento}')
+    else:
+        print("Evento não encontrado")
 
-    def __init__(self, nome, data_inicio, duracao, vagas):
-        self.nome = nome
-        self.data_inicio = data_inicio
-        self.duracao = duracao
-        self.vagas = vagas
+def consultar_eventos():
+    print('************ LISTA DE TODOS OS EVENTOS *************')
+    for evento in Eventos.all():
+        print(f'Evento: {evento}')
 
+def remover_evento():
+    print('************ EXCLUSÃO DE EVENTO *************')
+    Eventos.excluir_evento(input("Nome do evento:"))
 
-    #Getters & Setters
-    def get_nome(self):
-        return self.nome
-
-    def set_nome (self, nome):
-        self._nome = nome
-
-    def get_data_inicio(self):
-        return self.data_inicio
-
-    def set_data_inicio(self, data_inicio):
-        return self.data_inicio
-
-    def get_duracao(self):
-        return self.duracao
-
-    def set_duracao(self, duracao):
-        self.duracao = duracao
-
-    def get_vagas(self):
-        return self.vagas
-
-    def set_vagas(self, vagas):
-        self.vagas = vagas
-
-    #To String
-    def __str__(self):
-        return "Nome: %s\nData de Realização: %s\nDuração: %d\nVagas: %d" % (self.nome, self.data_inicio, self.duracao, self.vagas)
-
-
-    def cadastro_evento(self, nome, data_inicio, duracao, vagas):
-        '''cadastrando evento, a função sera chamada em estacionamento.py '''
-        evento = Eventos(nome.upper(), data_inicio.upper(), duracao.upper(), vagas.upper())
-        c.execute(
-            'CREATE TABLE IF NOT EXISTS cadastro_de_eventos(nome TEXT PRIMARY KEY, data_inicio TEXT, duracao TEXT, vagas TEXT)')
-        c.execute('INSERT INTO evento VALUES (?, ?, ?, ?)',
-                  (evento.get_nome(), evento.get_data_inicio(), evento.get_duracao(), evento.get_vagas()))
-        con.commit()
-        self.armazenar_eventos()
-
-
-    def armazenar_eventos(self):
-        c.execute("SELECT * FROM proprietarios ")
-        for linha in c.fetchall():
-            nome = linha[0]
-            data_inicio = linha[1]
-            duracao = linha[2]
-            vaga = linha[3]
-            eve = Eventos(nome, data_inicio, duracao, vaga)
+def atualizar_evento():
+    print('************ ATUALIZAÇÃO DE EVENTO *************')
+    Eventos.atualizar_evento_por_nome(input("Nome do evento:"))

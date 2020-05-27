@@ -1,11 +1,11 @@
 from estacionamento import Estacionamento
 from datetime import datetime
 import getpass
-
 from eventos import Eventos
+from eventos import *
 
-evento = Eventos()
 estacionamento = Estacionamento()
+
 
 data_atual = datetime.today()
 data_em_texto = data_atual.strftime('%d/%m/%Y')
@@ -17,7 +17,7 @@ def upload_bd():
     estacionamento.armazenar_areas()
     estacionamento.armazenar_usuarios()
     estacionamento.armazenar_ocorrencias()
-    evento.armazenar_eventos()
+    estacionamento.armazenar_eventos()
 
 
 def login():
@@ -75,6 +75,8 @@ def principal_gestor():
         ("Controle de Acessos", menu_acessos),
         ("Ocorrências", menu_ocorrencias),
         ("Áreas", menu_areas),
+        ("Eventos", menu_eventos)
+
     ]
     return menu("Morais' Parking", opcoes)
 
@@ -95,6 +97,7 @@ def principal_func_est():
         ("Controle de Acessos", menu_acessos),
         ("Ocorrências", menu_ocorrencias),
         ("Áreas", menu_areas),
+        ("Eventos", menu_eventos)
     ]
     return menu("Morais' Parking", opcoes)
 
@@ -108,6 +111,17 @@ def menu_veiculos():
     ]
 
     return menu("Veículos", opcoes)
+
+def menu_eventos():
+    opcoes = [
+        ("Cadastrar", cadastrar_evento),
+        ("Consultar por nome", consultar_evento_por_nome),
+        ("Listar todos", consultar_eventos),
+        ("Atualizar", atualizar_evento),
+        ("Remover", remover_evento),
+    ]
+
+    return menu("Eventos", opcoes)
 
 
 def cadastrar_veiculo():
@@ -225,9 +239,6 @@ def excluir_area():
     estacionamento.excluir_area(input('Área: '))
 
 
-def cadastrar_evento():
-    print('************ CADASTRAR ÁREA *************')
-    evento.cadastrar_evento(input('Nome: '), input('Duração: '), input('Data de Inicio: '))
 
 
 login()
